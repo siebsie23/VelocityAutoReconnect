@@ -40,7 +40,7 @@ import java.util.concurrent.CompletionException;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
-@Plugin(id = "velocityautoreconnect", name = "VelocityAutoReconnect", version = "1.2.4", authors = {"Flori4nK"})
+@Plugin(id = "velocityautoreconnect", name = "VelocityAutoReconnect", version = "1.3.0", authors = {"Flori4nK", "siebsie23"})
 public class VelocityAutoReconnect {
 
     private static ProxyServer proxyServer;
@@ -108,8 +108,15 @@ public class VelocityAutoReconnect {
             Collection<Player> connectedPlayers = limboServer.getPlayersConnected();
             // Prevent NullPointerException when Limbo is empty
             if (connectedPlayers.isEmpty()) return;
-            
+
             Player nextPlayer = connectedPlayers.iterator().next();
+
+            // Check if the player has the bypass permission
+            if (VelocityAutoReconnect.getConfigurationManager().getBooleanProperty("bypasscheck")
+                    && nextPlayer.hasPermission("velocityautoreconnect.bypass")) {
+                return;
+            }
+
             RegisteredServer previousServer = playerManager.getPreviousServer(nextPlayer);
 
             // If enabled, check if a server responds to pings before connecting
